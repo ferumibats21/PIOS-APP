@@ -26,8 +26,8 @@ export function Donut({
   let offset = 0;
   return (
     <View testID={testID} style={{ width: size, height: size }}>
-      <Svg width={size} height={size}>
-        <G rotation={-90} origin={`${size / 2}, ${size / 2}`}>
+      <Svg width={size} height={size} style={{ transform: [{ rotate: "-90deg" }] }}>
+        <G>
           <Circle cx={size / 2} cy={size / 2} r={r} stroke={colors.surfaceTertiary} strokeWidth={thickness} fill="none" />
           {total > 0 &&
             items.map((d, i) => {
@@ -109,6 +109,7 @@ export function LineChart({
             <Line key={t} x1={0} x2={w} y1={padT + innerH * t} y2={padT + innerH * t} stroke={colors.border} strokeDasharray="3 4" strokeWidth={1} />
           ))}
           {series.map((s, si) => {
+            if (!s.values.length) return null;
             const pts = s.values.length === 1 ? [s.values[0], s.values[0]] : s.values;
             const xs = (i: number) => (s.values.length === 1 ? (i === 0 ? padL : padL + innerW) : x(i));
             const d = pts.map((v, i) => `${i === 0 ? "M" : "L"}${xs(i).toFixed(1)},${y(v).toFixed(1)}`).join(" ");

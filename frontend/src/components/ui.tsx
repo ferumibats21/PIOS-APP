@@ -331,9 +331,9 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
           key={toast.id}
           entering={FadeInUp}
           exiting={FadeOutUp}
-          pointerEvents="none"
           testID="toast-message"
           style={{
+            pointerEvents: "none",
             position: "absolute",
             top: insets.top + 8,
             left: 16,
