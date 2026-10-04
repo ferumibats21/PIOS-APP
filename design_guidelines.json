@@ -1,0 +1,174 @@
+{
+  "app_name": "PIOS (Personal Investment Operating System)",
+  "personality": "7 Dark-First Utility",
+  "personality_one_liner": "A high-density, performance-oriented command center designed for live operational scanning and tactical wealth management.",
+  "color": {
+    "surface": "#0F1014",
+    "onSurface": "#F8F9FA",
+    "surfaceSecondary": "#1A1B22",
+    "onSurfaceSecondary": "#E4E4E7",
+    "surfaceTertiary": "#272831",
+    "onSurfaceTertiary": "#D4D4D8",
+    "surfaceInverse": "#FFFFFF",
+    "onSurfaceInverse": "#0F1014",
+    "brand": "#059669",
+    "onBrand": "#FFFFFF",
+    "brandPrimary": "#10B981",
+    "onBrandPrimary": "#064E3B",
+    "brandSecondary": "#34D399",
+    "onBrandSecondary": "#022C22",
+    "brandTertiary": "#064E3B",
+    "onBrandTertiary": "#A3E635",
+    "success": "#10B981",
+    "onSuccess": "#FFFFFF",
+    "warning": "#F5A623",
+    "onWarning": "#4A2800",
+    "error": "#EF4444",
+    "onError": "#FFFFFF",
+    "border": "#272831",
+    "borderStrong": "#3F414D",
+    "divider": "#1A1B22",
+    "muted": "#71717A"
+  },
+  "typography": {
+    "displayFontFamily": "Barlow Condensed",
+    "textFontFamily": "IBM Plex Sans",
+    "scale": {
+      "sm": 12,
+      "base": 14,
+      "lg": 16,
+      "xl": 20,
+      "2xl": 24
+    }
+  },
+  "spacing": {
+    "rule": "High density rules: tighter margins (sm/md), exposed system states, and structured dividers. Empty space should feel deliberate, not sparse.",
+    "xs": 4,
+    "sm": 8,
+    "md": 12,
+    "lg": 16,
+    "xl": 24,
+    "2xl": 32,
+    "3xl": 48
+  },
+  "radius_tokens": {
+    "sm": 6,
+    "md": 12,
+    "lg": 20,
+    "pill": 999
+  },
+  "shadow_tier": "0",
+  "navigation": "bottom_tabs",
+  "icon_set": "Phosphor",
+  "glassmorphism": {
+    "enabled": false,
+    "do's": [
+      "Use solid surfaceSecondary and surfaceTertiary for elevation."
+    ],
+    "dont's": [
+      "No blur or glassmorphism. This is a tactical, Dark-First Utility app."
+    ]
+  },
+  "platform_libraries": {
+    "glass": {
+      "ios": "expo-blur",
+      "android": "expo-blur",
+      "low_end_android_fallback": "solid surfaceSecondary"
+    },
+    "image": "expo-image",
+    "blur": "expo-blur",
+    "bottom_sheet": "@gorhom/bottom-sheet",
+    "animation": "react-native-reanimated",
+    "gesture": "react-native-gesture-handler"
+  },
+  "screens": [
+    {
+      "name": "Dashboard",
+      "purpose": "A high-level command center showing Net Worth, FIRE progress, and asset allocation.",
+      "states": {
+        "loading": "Skeleton blocks for the Portfolio Hero, Donut Chart, and Area Chart.",
+        "empty": "No assets to display. Shows 'Tambah Aset Pertama' CTA in the center.",
+        "error": "Failed to load dashboard data. Retry button."
+      },
+      "layout": "Portfolio Hero at the top (Net worth in IDR, day-change chip, FIRE progress %), supported by an allocation donut chart (Cash/Reksadana/ID Stocks/USD Stocks/Gold) and a Net Worth area chart (monthly/yearly toggle). BTC cycle signal banner below the chart. Review reminder banner on the 25th of the month. Use hairline dividers between sections."
+    },
+    {
+      "name": "Audit",
+      "purpose": "Detailed breakdown of all assets with a Bulk Price Updater and individual ticker management.",
+      "states": {
+        "loading": "Skeleton rows representing asset categories and tickers.",
+        "empty": "Illustration of an empty vault. 'Belum ada aset terdaftar.' with a primary Add CTA.",
+        "error": "Unable to fetch asset ledger. Retry button."
+      },
+      "layout": "Accordion list of 5 asset categories. Each row shows Ticker, Qty, Avg Price, Current Price, Market Value, and Floating P/L (color-coded Emerald/Red). Includes a sticky 'Bulk Price Updater' modal button and '+ Tambah Aset Baru' FAB/Sticky Bottom Action. Ticker detail page includes split Jual/Sell action blocks and a transaction log."
+    },
+    {
+      "name": "Decision Engine",
+      "purpose": "A tool to calculate and distribute monthly allocation across the portfolio.",
+      "states": {
+        "loading": "Skeleton form fields.",
+        "empty": "Standard form view ready for input.",
+        "error": "N/A"
+      },
+      "layout": "Dense form layout. Top block: Monthly allocation + bonus input. Middle block: Multi-asset allocation rows with two-way % <-> Rp sync. Bottom block: Sticky 'Simpan / Save' button, disabled unless the total exactly matches 100%."
+    },
+    {
+      "name": "JournalLedger",
+      "purpose": "Chronological ledger of all transactions and thesis notes.",
+      "states": {
+        "loading": "Skeleton list rows.",
+        "empty": "Empty open notebook visual. 'Belum ada catatan transaksi.'",
+        "error": "Error loading ledger. Retry button."
+      },
+      "layout": "Split view or toggleable tabs between 'Transactions' and 'Thesis Notes'. Transactions view uses a dense watchlist blotter format (Date, Ticker, Type, Amount). Thesis notes view shows a stacked card list of notes."
+    },
+    {
+      "name": "PlaybookSettings",
+      "purpose": "Strategic trackers, calculators, and system configuration.",
+      "states": {
+        "loading": "Skeleton blocks for settings items.",
+        "empty": "N/A",
+        "error": "N/A"
+      },
+      "layout": "List-based settings layout. Sections for: 'Strategy' (BTC 4-year halving tracker 2024–2034 with visual timeline, FIRE Monte Carlo 3-scenario calculator), 'System' (Backup/Restore JSON, PIN lock toggle, USD/IDR rate input), and 'Danger Zone' (Reset app). Ensure touch-friendly tap targets."
+    },
+    {
+      "name": "SetupWizard",
+      "purpose": "Initial onboarding to configure the user's base operating parameters.",
+      "states": {
+        "loading": "N/A",
+        "empty": "N/A",
+        "error": "N/A"
+      },
+      "layout": "Full-bleed abstract background with a gradient-to-dark scrim. Step-by-step wizard capturing initial balance, target FIRE number, and preferred base currency. Minimalist, focused inputs with a sticky 'Next' CTA at the bottom."
+    }
+  ],
+  "images": {
+    "setup_wizard_bg": {
+      "url": "https://images.unsplash.com/photo-1526289034009-0240ddb68ce3?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2NzF8MHwxfHNlYXJjaHwxfHxhYnN0cmFjdCUyMGRhcmslMjBnZW9tZXRyaWMlMjBhcmNoaXRlY3R1cmV8ZW58MHx8fHwxNzkxMTE3MjkzfDA&ixlib=rb-4.1.0&q=85",
+      "dark": "https://images.unsplash.com/photo-1526289034009-0240ddb68ce3?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2NzF8MHwxfHNlYXJjaHwxfHxhYnN0cmFjdCUyMGRhcmslMjBnZW9tZXRyaWMlMjBhcmNoaXRlY3R1cmV8ZW58MHx8fHwxNzkxMTE3MjkzfDA&ixlib=rb-4.1.0&q=85",
+      "light": "https://images.unsplash.com/photo-1498262257252-c282316270bc?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2NzF8MHwxfHNlYXJjaHwxfHxhYnN0cmFjdCUyMGxpZ2h0JTIwZ2VvbWV0cmljJTIwYXJjaGl0ZWN0dXJlfGVufDB8fHx8MTc5MTExNzI5M3ww&ixlib=rb-4.1.0&q=85",
+      "alt": "Abstract geometric architecture"
+    },
+    "journal_empty": {
+      "url": "https://images.unsplash.com/photo-1523635050353-f5b60dafa07c?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjAzOTB8MHwxfHNlYXJjaHwxfHxlbXB0eSUyMG9wZW4lMjBub3RlYm9vayUyMG1pbmltYWwlMjBkZXNrfGVufDB8fHx8MTc5MTExNzI5M3ww&ixlib=rb-4.1.0&q=85",
+      "dark": "https://images.unsplash.com/photo-1523635050353-f5b60dafa07c?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjAzOTB8MHwxfHNlYXJjaHwxfHxlbXB0eSUyMG9wZW4lMjBub3RlYm9vayUyMG1pbmltYWwlMjBkZXNrfGVufDB8fHx8MTc5MTExNzI5M3ww&ixlib=rb-4.1.0&q=85",
+      "alt": "Empty open notebook on a minimal desk"
+    },
+    "btc_playbook_hero": {
+      "url": "https://images.unsplash.com/photo-1658225282648-b199eb2a4830?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDQ2MzR8MHwxfHNlYXJjaHwxfHxiaXRjb2luJTIwZ3JhcGhpYyUyMGRhcmslMjBtaW5pbWFsfGVufDB8fHx8MTc5MTExNzI5M3ww&ixlib=rb-4.1.0&q=85",
+      "dark": "https://images.unsplash.com/photo-1658225282648-b199eb2a4830?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDQ2MzR8MHwxfHNlYXJjaHwxfHxiaXRjb2luJTIwZ3JhcGhpYyUyMGRhcmslMjBtaW5pbWFsfGVufDB8fHx8MTc5MTExNzI5M3ww&ixlib=rb-4.1.0&q=85",
+      "alt": "Dark minimal Bitcoin graphic"
+    }
+  },
+  "instructions_to_main_agent": [
+    "Build 'PIOS' as a 100% offline app with no backend; all state strictly handled locally. Incorporate backup/restore functionality using local JSON.",
+    "The default appearance must be Dark mode ('7 Dark-First Utility' theme). Support Light mode by inverting the surface colors to Stark White/Light Grays while maintaining the crisp, tactical density (avoid muddy grays).",
+    "Use tabular lining for numbers/metrics. Font pairing is 'Barlow Condensed' for data/headers and 'IBM Plex Sans' for interface labels.",
+    "The 'Dashboard' needs to be dense but scannable. Utilize Watchlist Blotters (pairing tickers with live sparkline and color-coded delta chips).",
+    "The 'Audit' screen is crucial: construct an accordion list grouping 5 asset categories. Emphasize the 'Bulk Price Updater' and individual ticker detail views.",
+    "Decision Engine: The 100% validation check on the allocation form is mandatory; disable the 'Save' CTA until the exact total is reached.",
+    "NO BLUES allowed anywhere in the app (including Info states). Rely on Emerald/Mint for positive actions/wealth, Warning for alerts, and Error for negative metrics.",
+    "Implement PIN lock functionality natively in the Settings tab."
+  ]
+}
