@@ -101,3 +101,34 @@
 #====================================================================================================
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
+## user_problem_statement: "Data di Expo Go selalu ke-reset/hilang setiap kali aplikasi di-reload. Perbaiki persistence: pakai @react-native-async-storage/async-storage, key PIOS_STATE, hydrate saat mount, auto-save setiap perubahan, jangan timpa data tersimpan dengan state default/demo."
+## frontend:
+##   - task: "Perbaiki persistence layer AsyncStorage (store.tsx)"
+##     implemented: true
+##     working: "NA"
+##     file: "frontend/src/store.tsx"
+##     stuck_count: 1
+##     priority: "high"
+##     needs_retesting: true
+##     status_history:
+##         -working: false
+##         -agent: "user"
+##         -comment: "User melaporkan data selalu hilang saat reload di Expo Go. Tes sebelumnya (iteration_1) hanya memverifikasi web preview/localStorage."
+##         -working: "NA"
+##         -agent: "main"
+##         -comment: "Rewrite persistence layer di store.tsx: pakai AsyncStorage langsung, key baru PIOS_STATE (migrasi dari key lama pios_state_v1 yang double-encoded), hydration sekali saat mount, auto-save setiap perubahan state, guard agar state kosong/default tidak pernah menimpa data tersimpan, reset() ikut menghapus key dari AsyncStorage."
+## metadata:
+##   created_by: "main_agent"
+##   version: "1.0"
+##   test_sequence: 2
+##   run_ui: true
+## test_plan:
+##   current_focus:
+##     - "Perbaiki persistence layer AsyncStorage (store.tsx)"
+##   stuck_tasks:
+##     - "Perbaiki persistence layer AsyncStorage (store.tsx)"
+##   test_all: false
+##   test_priority: "stuck_first"
+## agent_communication:
+##     -agent: "main"
+##     -message: "Fokus uji persistence: setelah Setup Wizard selesai, data harus tersimpan di key PIOS_STATE (bukan pios_state_v1), reload harus memulihkan data (wizard tidak muncul lagi), perubahan (tambah aset/update harga) tersimpan real-time, dan reload berikutnya tidak menimpa data dengan state default. Verifikasi juga migrasi: jika localStorage lama berisi pios_state_v1 (double-encoded), app tetap memuatnya lalu menulis ke PIOS_STATE."

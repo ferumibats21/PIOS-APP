@@ -1,12 +1,44 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
 import { AppState as RNAppState } from "react-native";
 
 import { dayKey, totals } from "@/src/lib/calc";
 import { AppState } from "@/src/lib/types";
 import { setColorScheme } from "@/src/theme";
-import { storage } from "@/src/utils/storage";
 
-const KEY = "pios_state_v1";
+// Persistence layer — AsyncStorage (modul native @react-native-async-storage/async-storage).
+// Di web preview, package ini memakai shim bawaannya sendiri agar app tetap jalan;
+// kode aplikasi tidak pernah menyentuh localStorage secara langsung.
+const KEY = "PIOS_STATE";
+const LEGACY_KEY = "pios_state_v1"; // dipakai versi lama (tersimpan double-encoded lewat wrapper)
+
+// Baca state tersimpan. PENTING: fungsi ini TIDAK pernah menulis/menimpa storage —
+// jika parse gagal, data lama dibiarkan utuh (tidak ditimpa state default/demo).
+async function loadPersistedState(): Promise<{ state: AppState | null; hadData: boolean }> {
+  try {
+    let raw = await AsyncStorage.getItem(KEY);
+    if (raw === null) raw = await AsyncStorage.getItem(LEGACY_KEY); // migrasi dari key lama
+    if (raw === null) return { state: null, hadData: false };
+    // Versi lama menyimpan lewat wrapper yang JSON-encode dua kali — kupas sampai dapat objek.
+    let parsed: unknown = JSON.parse(raw);
+    while (typeof parsed === "string") parsed = JSON.parse(parsed);
+    if (typeof parsed !== "object" || parsed === null || !(parsed as Partial<AppState>).settings) {
+      return { state: null, hadData: true };
+    }
+    return { state: normalize(parsed as Partial<AppState>), hadData: true };
+  } catch (e) {
+    console.warn("[pios] gagal membaca data tersimpan — data lama dibiarkan utuh", e);
+    return { state: null, hadData: true };
+  }
+}
+
+async function persistState(s: AppState) {
+  try {
+    await AsyncStorage.setItem(KEY, JSON.stringify(s));
+  } catch (e) {
+    console.warn("[pios] gagal menyimpan data", e);
+  }
+}
 
 export function createDefaultState(): AppState {
   return {
@@ -84,23 +116,28 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   const pinRef = useRef(false);
   pinRef.current = state.settings.pinEnabled;
 
+  const hadStoredData = useRef(false);
+
+  // Hydration: baca data tersimpan SEKALI saat app mount.
   useEffect(() => {
     (async () => {
-      const raw = await storage.getItem(KEY, null as string | null);
-      if (typeof raw === "string") {
-        try {
-          const parsed = normalize(JSON.parse(raw));
-          setState(withSnapshot(parsed));
-          if (parsed.settings.pinEnabled) setLocked(true);
-        } catch {}
+      const { state: saved, hadData } = await loadPersistedState();
+      hadStoredData.current = hadData;
+      if (saved) {
+        setState(withSnapshot(saved));
+        if (saved.settings.pinEnabled) setLocked(true);
       }
       setReady(true);
     })();
   }, []);
 
+  // Auto-save: setiap perubahan state (DCA, update harga, transaksi ledger, settings)
+  // langsung disimpan real-time. Jangan pernah menimpa data tersimpan dengan state kosong/default.
   useEffect(() => {
     setColorScheme(state.settings.theme);
-    if (ready) storage.setItem(KEY, JSON.stringify(state));
+    if (!ready) return;
+    if (!state.isInitialized && hadStoredData.current) return;
+    persistState(state);
   }, [state, ready]);
 
   // Re-lock when returning from background after 30s
@@ -116,8 +153,11 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   const update = useCallback((fn: (s: AppState) => AppState) => setState((prev) => withSnapshot(fn(prev))), []);
   const replace = useCallback((s: AppState) => setState(withSnapshot(normalize(s))), []);
   const reset = useCallback(() => {
+    hadStoredData.current = false;
     setLocked(false);
     setState(createDefaultState());
+    AsyncStorage.removeItem(KEY).catch(() => {});
+    AsyncStorage.removeItem(LEGACY_KEY).catch(() => {});
   }, []);
 
   return (
